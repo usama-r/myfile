@@ -1,0 +1,240 @@
+<html>
+    <head>
+        <title>hi</title>
+    </head>
+
+    <body>
+      <table id="tbl" style="width:100%">
+        <tr>
+          <th><input type="checkbox" disabled="true"></th>
+          <th>Sr. No</th>
+          <th>Product Name</th>
+          <th>Quantity</th>
+          <th>Discount</th>
+          <th>Price</th>
+          <th>Total Price</th>
+        </tr>
+      </table>
+      <br><br>
+      <button type="button" class="btn1" onclick=add_rows()>+ Add More</button>
+      <button type="button" class="btn2" onclick=delete_rows()>- Delete</button>
+      <div style="text-align: right;">
+        <label for="sub_total" class="div_label">Sub Total</label>
+        <input id="sub_total" type="number" class="div_input" style="width: 83.33%;">
+        <br><br><br>
+        <label for="amount_paid" class="div_label">Amount Paid</label>
+        <input id="amount_paid" type="number" class="div_input" placeholder="Amount Paid" style="background-color:white;" onclick=amount()>
+        <br><br><br>
+        <label for="amount_due" class="div_label">Amount Due</label>
+        <input id="amount_due" type="number" class="div_input" style="width: 78.93%;">
+      </div>
+    </body>
+
+    <script>
+        function add_rows()
+        {
+          var tab = document.getElementById("tbl");
+          var row_number = tab.rows.length;
+          var row = tab.insertRow(row_number);
+
+          var check_cell = row.insertCell(0);
+          var cell_element = document.createElement("input");
+          cell_element.type = "checkbox";
+          cell_element.style.width = 50;
+          cell_element.name = "check_cell" + row_number;
+          check_cell.appendChild(cell_element);
+
+          var serial_cell = row.insertCell(1);
+          serial_cell.innerHTML = row_number + ".";
+
+          var name_cell = row.insertCell(2);
+          cell_element = document.createElement("input");
+          cell_element.type = "text";
+          cell_element.style.padding = 5;
+          cell_element.style.fontSize = 15;
+          cell_element.style.width = 550;
+          cell_element.name = "name_cell" + row_number;
+          name_cell.appendChild(cell_element);
+
+          var quantity_cell = row.insertCell(3);
+          cell_element = document.createElement("input");
+          cell_element.type = "number";
+          cell_element.style.padding = 5;
+          cell_element.style.fontSize = 15;
+          cell_element.style.width = 100;
+          cell_element.name = "quantity_cell" + row_number;
+          cell_element.id = "quantity_cell" + row_number;
+          quantity_cell.appendChild(cell_element);
+
+          var discount_cell = row.insertCell(4);
+          cell_element = document.createElement("input");
+          cell_element.type = "number";
+          cell_element.style.padding = 5;
+          cell_element.style.fontSize = 15;
+          cell_element.style.width = 100;
+          cell_element.name = "discount_cell" + row_number;
+          cell_element.id = "discount_cell" + row_number;
+          discount_cell.appendChild(cell_element);
+
+          var price_cell = row.insertCell(5);
+          cell_element = document.createElement("input");
+          cell_element.type = "number";
+          cell_element.style.padding = 5;
+          cell_element.style.fontSize = 15;
+          cell_element.style.width = 200;
+          cell_element.name = "price_cell" + row_number;
+          cell_element.id = "price_cell" + row_number;
+          cell_element.addEventListener('click', function(){ calculations(row_number) });
+          price_cell.appendChild(cell_element);
+
+          var total_cell = row.insertCell(6);
+          cell_element = document.createElement("input");
+          cell_element.type = "number";
+          cell_element.style.padding = 5;
+          cell_element.style.fontSize = 15;
+          cell_element.style.width = 200;
+          cell_element.style.border = "1px solid black";
+          cell_element.style.backgroundColor = "#CFCACA";
+          cell_element.name = "total_cell" + row_number;
+          cell_element.id = "total_cell" + row_number;
+          total_cell.appendChild(cell_element);
+
+        }
+        function delete_rows()
+        {
+          var tab = document.getElementById("tbl");
+          var row_number = tab.rows.length;
+          var i = 1;
+          while(i <= row_number)
+          {
+            var row = tab.rows[i];
+            var check = row.cells[0].childNodes[0];
+            if(check != null && check.checked == true) 
+            {
+                tab.deleteRow(i);
+                row_number--;
+                i--;
+            }
+            i++;
+          }
+          var row_number = tab.rows.length;
+          var sub_total = 0;
+          document.getElementById("sub_total").innerHTML =0;
+          var i = 1;
+          while(i < row_number)
+          {
+            var get_total = parseInt(document.getElementById("total_cell"+i).value);
+            sub_total = sub_total + get_total;
+            i++;
+          }
+          document.getElementById("sub_total").innerHTML = sub_total;
+          document.getElementById("amount_due").innerHTML = sub_total;
+          amount();
+        }
+        function calculations(row_number)
+        {
+          var quantity = parseInt(document.getElementById("quantity_cell"+row_number).value);
+          var discount = parseInt(document.getElementById("discount_cell"+row_number).value);
+          var price = parseInt(document.getElementById("price_cell"+row_number).value);
+          discount = discount/100;
+          price = price * quantity;
+          discount = price * discount;
+          price = price - discount;
+          document.getElementById("total_cell"+row_number).value = price;
+
+          var tab = document.getElementById("tbl");
+          var row_number = tab.rows.length;
+          var sub_total = 0;
+          document.getElementById("sub_total").value =0;
+          var i = 1;
+          while(i < row_number)
+          {
+            var get_total = parseInt(document.getElementById("total_cell"+i).value);
+            sub_total = sub_total + get_total;
+            i++;
+          }
+
+          document.getElementById("sub_total").value = sub_total;
+          document.getElementById("amount_due").value = sub_total;
+
+        }
+        function amount()
+        {
+          var sub = parseInt(document.getElementById("sub_total").value);
+          var paid = parseInt(document.getElementById("amount_paid").value);
+          if((sub - paid) < 0)
+          {
+            var due = 0;
+          }
+          else
+          {
+            var due = sub - paid;
+          }
+          document.getElementById("amount_due").value = due;
+        }
+    </script>
+
+    <style>
+      table, th, td {
+        border:1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        color: #3647C4;
+      }
+      .btn1
+      {
+        background-color: #2BCF41;
+        border-radius: 5px;
+        padding: 10px;
+        color: white;
+        font-size: medium;
+        border: 0px solid black;
+      }
+      .btn1:hover
+      {
+        background-color: white;
+        color: #2BCF41;
+        border: 2px solid #2BCF41;
+      }
+      .btn2
+      {
+        background-color: #ED2828;
+        border-radius: 5px;
+        padding: 10px;
+        color: white;
+        font-size: medium;
+        border: 0px solid black;
+      }
+      .btn2:hover
+      {
+        background-color: white;
+        color: #ED2828;
+        border: 2px solid #ED2828;
+      }
+      div
+      {
+        width: 500px;
+        float: right;
+      }
+      .div_label
+      {
+        padding: 10px;
+        font-size: medium;
+        background-color: #CFCACA ;
+        border: 1px solid black;
+        float: left;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+      }
+      .div_input
+      {
+        padding: 10.5px;
+        font-size: 15px;
+        background-color: #CFCACA ;
+        width: 78.6%;
+        border: 1px solid black;
+        float: right;
+      }
+    </style>
+    
+</html>
